@@ -8,6 +8,7 @@ Script for compiling RV1106 firmware.
   - 1.2 Download Source Code & Prepare
     ```
     make check-repo && make prepare
+    make prepare //need to run make prepare two times, cause it would get error on first time to build aws-iot.
     ```
   - 1.3 Build Firmware in Docker Container
     ```
