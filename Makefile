@@ -5,6 +5,8 @@ IMAGE_NAME := rv1106-sdk
 IMAGE_TAG := latest
 CONTAINER_NAME := rv1106-build
 CONTAINER_MOUNT_POINT := /opt/rv1106_firmware
+CONTAINER_MOUNT_POINT2 := /opt/rv1106_firmware/script.sh
+HOST_MOUNT_PATH2 = $(shell pwd)/script.sh
 
 # Default host mount path (can be overridden via command line)
 HOST_MOUNT_PATH ?= $(shell pwd)/rv1106_firmware
@@ -13,6 +15,7 @@ REPO_URL ?= git@github.com:frodobots-org/RV1106_1.8.3.git
 BRANCH_NAME ?= ethan-dev
 
 .PHONY: check-repo
+
 check-repo:
 	@if [ ! -d "$(HOST_MOUNT_PATH)" ]; then \
 		echo "rv1106_firmware directory not found，start to clone..."; \
@@ -32,9 +35,10 @@ prepare:
 	cd $(HOST_MOUNT_PATH)/frodobots && git submodule update --init --recursive
 	docker run --rm \
 		-v $(HOST_MOUNT_PATH):$(CONTAINER_MOUNT_POINT) \
+		-v $(HOST_MOUNT_PATH2):$(CONTAINER_MOUNT_POINT2) \
 		-w $(CONTAINER_MOUNT_POINT) \
 		$(IMAGE_NAME):$(IMAGE_TAG) \
-		bash -c "cd frodobots && ./scripts/build-third-party.sh cross-compile"
+		bash -c "./script.sh & cd frodobots && ./scripts/build-third-party.sh cross-compile"
 
 # Build Docker image
 build:
@@ -45,6 +49,7 @@ run:
 	docker run -it --rm \
 		--name $(CONTAINER_NAME) \
 		-v $(HOST_MOUNT_PATH):$(CONTAINER_MOUNT_POINT) \
+		-v $(HOST_MOUNT_PATH2):$(CONTAINER_MOUNT_POINT2) \
 		-w $(CONTAINER_MOUNT_POINT) \
 		$(IMAGE_NAME):$(IMAGE_TAG)
 

@@ -34,6 +34,8 @@ RUN apt-get install gperf -y
 
 RUN apt-get install cmake -y
 
+RUN apt-get install autoconf automake libtool -y
+
 RUN git config --global --add safe.directory /opt/rv1106_firmware
 
 # Create SDK directory (mount point)
